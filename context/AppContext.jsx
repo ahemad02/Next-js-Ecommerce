@@ -43,7 +43,6 @@ export const AppContextProvider = (props) => {
       if (user.publicMetadata.role === "seller") setIsSeller(true);
 
       const token = await getToken();
-      console.log("token:", token); // make sure it's not undefined
 
       const { data } = await axios.get("/api/user/data", {
         headers: { Authorization: `Bearer ${token}` },
@@ -62,6 +61,11 @@ export const AppContextProvider = (props) => {
   };
 
   const addToCart = async (itemId) => {
+    if (!user) {
+      toast.error("Please login first");
+      return;
+    }
+
     let cartData = structuredClone(cartItems || {});
 
     if (cartData[itemId]) {
@@ -80,7 +84,7 @@ export const AppContextProvider = (props) => {
           { cartData },
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
 
         toast.success("Item added to cart");
@@ -107,7 +111,7 @@ export const AppContextProvider = (props) => {
           { cartData },
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
 
         toast.success("Cart updated");
